@@ -1,1 +1,28 @@
+# Vercel
 .vercel
+
+# 运行时缓存
+api/cache/
+
+# 服务器配置（Vercel 不用）
+.htaccess
+nginx.htaccess
+
+# 环境变量
+.env
+.env.*
+!.env.example
+
+# Composer
+api/vendor/
+composer.lock
+api/composer.lock
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
