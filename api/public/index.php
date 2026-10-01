@@ -383,7 +383,7 @@
                         <td><span class="param-type">string</span></td>
                         <td><span class="param-optional">否</span></td>
                         <td><span class="param-default">netease</span></td>
-                        <td>音乐平台：<code>netease</code>（网易云）、<code>tencent</code>（QQ音乐）、<code>kugou</code>（酷狗）、<code>kuwo</code>（酷我）、<code>baidu</code>（百度）、<code>xiami</code>（虾米）</td>
+                        <td>音乐平台：<code>netease</code>（网易云）、<code>tencent</code>（QQ音乐）</td>
                     </tr>
                     <tr>
                         <td><span class="param-name">type</span></td>
@@ -405,14 +405,14 @@
             <div class="section-subtitle">🔢 类型支持矩阵</div>
             <table class="param-table">
                 <thead>
-                    <tr><th>type</th><th>说明</th><th>netease</th><th>tencent</th><th>kugou</th><th>kuwo</th></tr>
+                    <tr><th>type</th><th>说明</th><th>netease</th><th>tencent</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td><span class="param-name">song</span></td><td>单曲信息</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">playlist</span></td><td>歌单</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">url</span></td><td>播放链接</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">lrc</span></td><td>歌词</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">pic</span></td><td>封面图片</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
+                    <tr><td><span class="param-name">song</span></td><td>单曲信息</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
+                    <tr><td><span class="param-name">playlist</span></td><td>歌单</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
+                    <tr><td><span class="param-name">url</span></td><td>播放链接</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
+                    <tr><td><span class="param-name">lrc</span></td><td>歌词</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
+                    <tr><td><span class="param-name">pic</span></td><td>封面图片</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
                 </tbody>
             </table>
 
