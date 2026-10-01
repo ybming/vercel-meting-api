@@ -867,7 +867,10 @@ function fmtTime(s){
 }
 function escapeHtml(s){
     if(!s) return '';
-    return String(s).replace(/[&<>"']/g,function(c){return {&:'&amp;',<'&lt;'>:'&gt;', '"':'&quot;',"'":'&#39;'}[c];});
+    return String(s).replace(/[&<>"'\x60]/g,function(c){
+        var map = {'&':'\\x26','<':'\\x3c','>':'\\x3e','"':'\\x22',"'":"\\x27",'`':'\\x60'};
+        return map[c] || c;
+    });
 }
 function updateClock(){
     document.getElementById('clock').textContent = new Date().toLocaleTimeString('zh-CN',{hour12:false});
