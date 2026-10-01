@@ -1,4 +1,8 @@
 <?php
+// 抑制 PHP 8.x 弃用警告，避免 headers already sent 问题
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED & ~E_WARNING);
+ini_set('display_errors', '0');
+
 // 设置API路径
 define('API_URI', api_uri());
 // 设置中文歌词

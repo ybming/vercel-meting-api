@@ -1132,9 +1132,15 @@ class Meting
                     'filename'  => array(),
                     'songtype'  => array(),
                     'uin'       => $uin,
-                    'loginflag' => 1,
+                    'loginflag' => 0,
                     'platform'  => '20',
                 ),
+            ),
+            'comm' => array(
+                'uin'    => $uin,
+                'format' => 'json',
+                'ct'     => 24,
+                'cv'     => 0,
             ),
         );
 
@@ -1155,21 +1161,44 @@ class Meting
             ),
         );
         $response = json_decode($this->exec($api), true);
-        $vkeys = $response['req_0']['data']['midurlinfo'];
 
-        foreach ($type as $index => $vo) {
-            if ($data['data'][0]['file'][$vo[0]] && $vo[1] <= $this->temp['br']) {
-                if (!empty($vkeys[$index]['vkey'])) {
-                    $url = array(
-                        'url'  => $response['req_0']['data']['sip'][0].$vkeys[$index]['purl'],
-                        'size' => $data['data'][0]['file'][$vo[0]],
-                        'br'   => $vo[1],
-                    );
-                    break;
+        // 优先用 vkey 方式获取带鉴权的完整 URL
+        $url = array();
+        if (!empty($response['req_0']['data']['midurlinfo']) && !empty($response['req_0']['data']['sip'])) {
+            $vkeys = $response['req_0']['data']['midurlinfo'];
+            foreach ($type as $index => $vo) {
+                if ($data['data'][0]['file'][$vo[0]] && $vo[1] <= $this->temp['br']) {
+                    if (!empty($vkeys[$index]['vkey'])) {
+                        $url = array(
+                            'url'  => $response['req_0']['data']['sip'][0].$vkeys[$index]['purl'],
+                            'size' => $data['data'][0]['file'][$vo[0]],
+                            'br'   => $vo[1],
+                        );
+                        break;
+                    }
                 }
             }
         }
-        if (!isset($url['url'])) {
+
+        // vkey 方式失败时，回退到 fcg_play_single_song.fcg 直接返回的 url 字段（无鉴权，可能 403）
+        if (empty($url['url'])) {
+            $songId = isset($data['data'][0]['id']) ? (string)$data['data'][0]['id'] : '';
+            if ($songId !== '' && !empty($data['url'][$songId])) {
+                $directUrl = $data['url'][$songId];
+                if (strpos($directUrl, '://') === false) {
+                    $directUrl = 'https://' . $directUrl;
+                } elseif (strpos($directUrl, 'http://') === 0) {
+                    $directUrl = 'https://' . substr($directUrl, 7);
+                }
+                $url = array(
+                    'url'  => $directUrl,
+                    'size' => 0,
+                    'br'   => 128,
+                );
+            }
+        }
+
+        if (empty($url['url'])) {
             $url = array(
                 'url'  => '',
                 'size' => 0,
