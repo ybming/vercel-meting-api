@@ -4,543 +4,660 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="favicon.png">
-    <title>Meting API · 多平台音乐 API 服务</title>
+    <title>Meting · 多平台音乐服务</title>
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --primary-dark: #4f46e5;
-            --primary-bg: rgba(99,102,241,0.07);
-            --success: #10b981;
-            --success-bg: rgba(16,185,129,0.07);
-            --warning: #f59e0b;
-            --warning-bg: rgba(245,158,11,0.07);
-            --danger: #ef4444;
-            --text: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --bg: #f1f5f9;
-            --bg-card: #ffffff;
-            --border: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-            --shadow: 0 2px 8px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
-            --radius: 10px;
-            --radius-sm: 6px;
-            --radius-lg: 14px;
-            --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --bg-0:#0a0a0f;
+            --bg-1:#111118;
+            --bg-2:#171722;
+            --bg-card:rgba(255,255,255,.04);
+            --bg-card-hover:rgba(255,255,255,.07);
+            --border:rgba(255,255,255,.06);
+            --text:#fff;
+            --text-2:rgba(255,255,255,.7);
+            --text-3:rgba(255,255,255,.45);
+            --text-4:rgba(255,255,255,.28);
+            --accent:#e94560;
+            --accent-2:#ff6b9d;
+            --accent-glow:rgba(233,69,96,.35);
+            --radius-1:6px;
+            --radius-2:10px;
+            --radius-3:16px;
+            --radius-full:999px;
+            --transition:.25s cubic-bezier(.4,0,.2,1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        html{scroll-behavior:smooth}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+            background:var(--bg-0);
+            color:var(--text);
+            min-height:100vh;
+            -webkit-font-smoothing:antialiased;
+            overflow-x:hidden;
+            padding-bottom:88px;
         }
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            background-size: 200% 200%;
-            animation: gradientShift 8s ease infinite;
-            width: 100%;
-            align-self: stretch;
-            padding: 80px 24px 64px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 500px; height: 500px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 50%;
-            top: -200px; right: -100px;
-            animation: float 6s ease-in-out infinite;
-        }
-        .hero::after {
-            content: '';
-            position: absolute;
-            width: 300px; height: 300px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 50%;
-            bottom: -100px; left: -80px;
-            animation: float 8s ease-in-out infinite reverse;
-        }
-        .hero-content { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
-        .hero-icon { font-size: 56px; margin-bottom: 16px; animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1); }
-        .hero h1 { font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 8px; animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both; }
-        .hero p { font-size: 16px; color: rgba(255,255,255,0.8); font-weight: 500; animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-        .badges { display: flex; justify-content: center; gap: 8px; margin-top: 20px; flex-wrap: wrap; animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.3s both; }
-        .badges img { height: 22px; }
-        .container { max-width: 960px; width: 100%; padding: 0 24px; margin-top: -32px; position: relative; z-index: 2; }
-        .card {
-            background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border);
-            padding: 28px 32px;
-            margin-bottom: 20px;
-            animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.4s both;
-        }
-        .card-title {
-            font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 20px;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-        .info-item {
-            padding: 14px 16px;
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            transition: var(--transition);
-        }
-        .info-item:hover { border-color: var(--primary); background: var(--primary-bg); }
-        .info-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-        .info-value { font-size: 14px; font-weight: 600; color: var(--text); word-break: break-all; }
-        .info-value a { color: var(--primary); text-decoration: none; font-weight: 600; }
-        .info-value a:hover { text-decoration: underline; }
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-        }
-        .link-card {
-            display: flex; align-items: center; gap: 14px;
-            padding: 16px 20px;
-            background: var(--bg);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            text-decoration: none; color: var(--text);
-            transition: var(--transition); min-height: 56px;
-        }
-        .link-card:hover { border-color: var(--primary); background: var(--primary-bg); transform: translateY(-2px); box-shadow: var(--shadow); }
-        .link-icon { font-size: 24px; flex-shrink: 0; }
-        .link-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-        .link-title { font-size: 14px; font-weight: 700; color: var(--text); }
-        .link-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-        .link-arrow { color: var(--text-muted); font-size: 14px; transition: var(--transition); }
-        .link-card:hover .link-arrow { color: var(--primary); transform: translateX(3px); }
-        .status-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 12px; border-radius: 20px;
-            font-size: 12px; font-weight: 600;
-            background: var(--success-bg); color: var(--success);
-        }
-        .status-dot {
-            width: 7px; height: 7px; border-radius: 50%;
-            background: var(--success); animation: pulse 2s ease-in-out infinite;
-        }
-        footer { text-align: center; padding: 32px 24px; color: var(--text-muted); font-size: 13px; }
-        footer a { color: var(--primary); text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
 
-        /* API Doc styles */
-        .api-method {
-            display: inline-flex; padding: 3px 10px; border-radius: 4px;
-            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        /* ===== Background Decor ===== */
+        body::before{
+            content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% -10%,rgba(233,69,96,.18),transparent 60%),
+                radial-gradient(ellipse 60% 40% at 100% 0%,rgba(99,102,241,.15),transparent 60%),
+                radial-gradient(ellipse 50% 50% at 50% 100%,rgba(139,92,246,.12),transparent 60%),
+                linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 100%);
         }
-        .method-get { background: var(--success-bg); color: var(--success); }
-        .api-path {
-            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 13px; font-weight: 600; color: var(--text); margin-left: 8px;
+        body::after{
+            content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+            background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);
+            background-size:24px 24px;
         }
-        .api-endpoint {
-            display: flex; align-items: center;
-            padding: 12px 16px; background: var(--bg);
-            border-radius: var(--radius-sm); border: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-        .param-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .param-table th {
-            padding: 10px 14px; text-align: left;
-            font-size: 11px; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border); background: transparent;
-        }
-        .param-table td {
-            padding: 10px 14px; border-bottom: 1px solid var(--border);
-            color: var(--text); vertical-align: top;
-        }
-        .param-table tbody tr:last-child td { border-bottom: none; }
-        .param-name {
-            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 12px; font-weight: 600; color: var(--primary);
-        }
-        .param-type { font-size: 11px; color: var(--text-muted); font-weight: 600; }
-        .param-required { font-size: 11px; font-weight: 700; color: var(--danger); }
-        .param-optional { font-size: 11px; font-weight: 600; color: var(--text-muted); }
-        .param-default { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: var(--text-secondary); }
-        .code-block {
-            position: relative; background: #1e293b;
-            border-radius: var(--radius-sm); padding: 16px 20px;
-            margin-bottom: 16px; overflow-x: auto;
-        }
-        .code-block pre {
-            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 13px; line-height: 1.6; color: #e2e8f0; white-space: pre; margin: 0;
-        }
-        .code-block .copy-btn {
-            position: absolute; top: 8px; right: 8px;
-            padding: 6px 12px;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 4px; color: #94a3b8;
-            font-size: 11px; font-weight: 600; cursor: pointer;
-            transition: var(--transition); font-family: inherit; min-height: 28px;
-        }
-        .code-block .copy-btn:hover { background: rgba(255,255,255,0.2); color: #e2e8f0; }
-        .code-block .copy-btn.copied { background: var(--success); color: #fff; border-color: var(--success); }
-        .code-label {
-            font-size: 12px; font-weight: 700; color: var(--text-secondary);
-            margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
-        }
-        .code-label .tag { display: inline-flex; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; }
-        .tag-json { background: var(--success-bg); color: var(--success); }
-        .tag-text { background: var(--primary-bg); color: var(--primary); }
-        .tag-redirect { background: var(--warning-bg); color: var(--warning); }
-        .section-subtitle {
-            font-size: 14px; font-weight: 700; color: var(--text);
-            margin: 24px 0 12px; display: flex; align-items: center; gap: 6px;
-        }
-        .platform-check { color: var(--success); font-weight: 700; }
-        .platform-cross { color: var(--text-muted); }
-        .tabs { display: flex; gap: 2px; margin-bottom: 16px; background: var(--bg); border-radius: var(--radius-sm); padding: 3px; border: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-        .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn {
-            padding: 8px 16px; border: none; background: transparent;
-            border-radius: 4px; cursor: pointer;
-            font-size: 12px; font-weight: 600; color: var(--text-secondary);
-            transition: var(--transition); font-family: inherit; white-space: nowrap; min-height: 32px;
-        }
-        .tab-btn:hover { color: var(--text); }
-        .tab-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: var(--shadow-sm); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        code {
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 12px; padding: 2px 6px;
-            background: var(--bg); border-radius: 4px; color: var(--primary);
-        }
-        .error-table { width: 100%; border-collapse: collapse; font-size: 13px; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .error-table th {
-            padding: 10px 14px; text-align: left;
-            font-size: 11px; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border);
-        }
-        .error-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-        .error-table tbody tr:last-child td { border-bottom: none; }
-        .error-code { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 700; }
-        .error-400 { color: var(--warning); }
-        .error-403 { color: var(--danger); }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 2px var(--success-bg); } 50% { box-shadow: 0 0 0 5px rgba(16,185,129,0.1); } }
+        /* ===== Navbar ===== */
+        .nav{
+            position:sticky;top:0;z-index:100;
+            backdrop-filter:blur(20px) saturate(160%);
+            -webkit-backdrop-filter:blur(20px) saturate(160%);
+            background:rgba(10,10,15,.7);
+            border-bottom:1px solid var(--border);
+        }
+        .nav-inner{
+            max-width:1200px;margin:0 auto;padding:14px 24px;
+            display:flex;align-items:center;justify-content:space-between;
+        }
+        .nav-logo{
+            display:flex;align-items:center;gap:10px;
+            text-decoration:none;color:#fff;font-weight:800;font-size:18px;letter-spacing:-.5px;
+        }
+        .nav-logo-icon{
+            width:32px;height:32px;border-radius:var(--radius-1);
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            display:flex;align-items:center;justify-content:center;
+            font-size:16px;
+            box-shadow:0 4px 14px var(--accent-glow);
+        }
+        .nav-logo span{background:linear-gradient(135deg,#fff,#c4c4d4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+        .nav-links{display:flex;gap:6px;align-items:center}
+        .nav-link{
+            padding:8px 16px;border-radius:var(--radius-full);
+            color:var(--text-2);text-decoration:none;font-size:13px;font-weight:500;
+            transition:var(--transition);
+        }
+        .nav-link:hover{color:#fff;background:rgba(255,255,255,.06)}
+        .nav-link.primary{
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            color:#fff;font-weight:600;
+        }
+        .nav-link.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--accent-glow)}
+        .nav-toggle{display:none;background:none;border:none;color:#fff;font-size:20px;cursor:pointer}
 
-        @media (max-width: 768px) {
-            .hero { padding: 48px 20px 40px; }
-            .hero::before { width: 300px; height: 300px; top: -120px; right: -60px; }
-            .hero::after { width: 200px; height: 200px; }
-            .hero h1 { font-size: 28px; letter-spacing: -0.5px; }
-            .hero p { font-size: 14px; }
-            .hero-icon { font-size: 42px; }
-            .card { padding: 20px 18px; border-radius: var(--radius); }
-            .card-title { font-size: 14px; flex-wrap: wrap; }
-            .info-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .info-item { padding: 12px; }
-            .info-label { font-size: 10px; }
-            .info-value { font-size: 13px; }
-            .links-grid { grid-template-columns: 1fr; }
-            .container { margin-top: -24px; }
+        /* ===== Container ===== */
+        .container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+        /* ===== Hero ===== */
+        .hero{padding:48px 0 32px}
+        .hero-inner{
+            display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:40px;align-items:center;
         }
-        @media (max-width: 480px) {
-            .hero { padding: 36px 16px 32px; }
-            .hero h1 { font-size: 24px; }
-            .hero p { font-size: 13px; }
-            .hero-icon { font-size: 36px; margin-bottom: 12px; }
-            .badges { gap: 4px; margin-top: 14px; }
-            .badges img { height: 18px; }
-            .card { padding: 16px 14px; margin-bottom: 14px; }
-            .info-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-            .info-value { font-size: 12px; }
-            .link-card { padding: 12px 14px; gap: 10px; }
-            .link-icon { font-size: 20px; }
-            .link-title { font-size: 13px; }
-            .link-desc { font-size: 11px; }
-            .container { padding: 0 12px; margin-top: -20px; }
-            footer { padding: 20px 16px; font-size: 12px; }
+        .hero-badge{
+            display:inline-flex;align-items:center;gap:8px;
+            padding:6px 14px;border-radius:var(--radius-full);
+            background:rgba(255,255,255,.05);border:1px solid var(--border);
+            font-size:11px;font-weight:600;color:var(--text-2);
+            margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;
         }
-        @media (max-width: 360px) {
-            .hero h1 { font-size: 20px; }
-            .hero p { font-size: 12px; }
-            .info-grid { grid-template-columns: 1fr; }
-            .card { padding: 14px 12px; }
+        .hero-badge-dot{
+            width:6px;height:6px;border-radius:50%;background:var(--accent);
+            box-shadow:0 0 0 3px var(--accent-glow);
+        }
+        .hero h1{
+            font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;
+            margin-bottom:18px;
+            background:linear-gradient(135deg,#fff 0%,#c4c4d4 50%,var(--accent-2) 100%);
+            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+        }
+        .hero-desc{
+            font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:28px;max-width:480px;
+        }
+        .hero-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+        .btn{
+            display:inline-flex;align-items:center;gap:8px;
+            padding:12px 24px;border-radius:var(--radius-full);
+            font-size:13px;font-weight:600;font-family:inherit;
+            border:none;cursor:pointer;text-decoration:none;
+            transition:var(--transition);
+        }
+        .btn-primary{
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+            box-shadow:0 4px 18px var(--accent-glow);
+        }
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--accent-glow)}
+        .btn-ghost{
+            background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--border);
+        }
+        .btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+        .hero-meta{display:flex;gap:24px;margin-top:32px}
+        .hero-meta-item{text-align:left}
+        .hero-meta-num{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px}
+        .hero-meta-label{font-size:11px;color:var(--text-3);font-weight:500;margin-top:2px;letter-spacing:.5px}
+
+        /* Hero Cover */
+        .hero-cover{
+            position:relative;aspect-ratio:1;
+            border-radius:var(--radius-3);overflow:hidden;
+            box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 80px rgba(233,69,96,.15);
+            animation:floaty 6s ease-in-out infinite;
+        }
+        .hero-cover img{width:100%;height:100%;object-fit:cover;display:block}
+        .hero-cover-overlay{
+            position:absolute;inset:0;
+            background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.7) 100%);
+        }
+        .hero-cover-play{
+            position:absolute;bottom:20px;right:20px;
+            width:52px;height:52px;border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;transition:var(--transition);
+            box-shadow:0 8px 24px var(--accent-glow);
+        }
+        .hero-cover-play:hover{transform:scale(1.1)}
+        .hero-cover-play::after{
+            content:'▶';color:#fff;font-size:18px;margin-left:3px;
+        }
+        .hero-cover-info{
+            position:absolute;bottom:20px;left:20px;right:80px;color:#fff;
+        }
+        .hero-cover-title{font-size:14px;font-weight:700;margin-bottom:2px}
+        .hero-cover-sub{font-size:11px;color:rgba(255,255,255,.7);font-weight:500}
+        /* Equalizer on cover */
+        .eq{
+            position:absolute;top:16px;left:16px;
+            display:flex;gap:2px;align-items:flex-end;
+            height:20px;padding:6px 10px;border-radius:var(--radius-full);
+            background:rgba(0,0,0,.5);backdrop-filter:blur(10px);
+        }
+        .eq span{
+            width:3px;background:var(--accent-2);border-radius:2px;
+            animation:eq 1s ease-in-out infinite;
+        }
+        .eq span:nth-child(1){height:40%;animation-delay:0s}
+        .eq span:nth-child(2){height:80%;animation-delay:.15s}
+        .eq span:nth-child(3){height:60%;animation-delay:.3s}
+        .eq span:nth-child(4){height:100%;animation-delay:.45s}
+        .eq span:nth-child(5){height:50%;animation-delay:.6s}
+
+        /* ===== Section ===== */
+        .section{padding:24px 0}
+        .section-head{
+            display:flex;align-items:flex-end;justify-content:space-between;
+            margin-bottom:24px;
+        }
+        .section-title{
+            font-size:20px;font-weight:800;letter-spacing:-.5px;
+            display:flex;align-items:center;gap:10px;
+        }
+        .section-title::before{
+            content:'';width:4px;height:20px;border-radius:2px;
+            background:linear-gradient(180deg,var(--accent),var(--accent-2));
+        }
+        .section-sub{font-size:13px;color:var(--text-3);margin-top:4px}
+        .section-more{
+            font-size:12px;color:var(--text-3);text-decoration:none;font-weight:500;
+            padding:6px 12px;border-radius:var(--radius-full);
+            transition:var(--transition);
+        }
+        .section-more:hover{color:#fff;background:rgba(255,255,255,.06)}
+
+        /* ===== Playlist Grid ===== */
+        .grid{
+            display:grid;gap:18px;
+            grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+        }
+        .card{
+            position:relative;border-radius:var(--radius-2);overflow:hidden;
+            background:var(--bg-card);border:1px solid var(--border);
+            cursor:pointer;transition:var(--transition);
+            animation:fadeUp .5s ease both;
+        }
+        .card:hover{background:var(--bg-card-hover);transform:translateY(-4px);border-color:rgba(255,255,255,.12)}
+        .card-cover{
+            position:relative;aspect-ratio:1;overflow:hidden;
+        }
+        .card-cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+        .card:hover .card-cover img{transform:scale(1.08)}
+        .card-play{
+            position:absolute;right:10px;bottom:10px;
+            width:40px;height:40px;border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            display:flex;align-items:center;justify-content:center;
+            opacity:0;transform:translateY(8px) scale(.9);
+            transition:var(--transition);
+            box-shadow:0 4px 16px var(--accent-glow);
+        }
+        .card:hover .card-play{opacity:1;transform:translateY(0) scale(1)}
+        .card-play::after{content:'▶';color:#fff;font-size:14px;margin-left:2px}
+        .card-body{padding:12px 14px 16px}
+        .card-title{
+            font-size:13px;font-weight:600;color:#fff;
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+            margin-bottom:4px;
+        }
+        .card-sub{font-size:11px;color:var(--text-3);font-weight:500}
+        .card-badge{
+            position:absolute;top:10px;left:10px;
+            padding:3px 8px;border-radius:var(--radius-full);
+            font-size:10px;font-weight:700;letter-spacing:.5px;
+            backdrop-filter:blur(10px);
+        }
+        .card-badge.netease{background:rgba(180,120,255,.85);color:#fff}
+        .card-badge.tencent{background:rgba(255,160,50,.85);color:#fff}
+
+        /* ===== API Section ===== */
+        .api-section{padding:48px 0}
+        .api-card{
+            background:rgba(255,255,255,.03);
+            border:1px solid var(--border);
+            border-radius:var(--radius-3);
+            overflow:hidden;
+            backdrop-filter:blur(10px);
+        }
+        .api-head{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:20px 24px;border-bottom:1px solid var(--border);
+        }
+        .api-head-left{display:flex;align-items:center;gap:12px}
+        .api-head h3{font-size:15px;font-weight:700}
+        .api-toggle{
+            background:none;border:none;color:var(--text-2);
+            font-size:12px;font-weight:600;cursor:pointer;
+            padding:6px 14px;border-radius:var(--radius-full);
+            display:flex;align-items:center;gap:6px;
+            transition:var(--transition);
+        }
+        .api-toggle:hover{background:rgba(255,255,255,.06);color:#fff}
+        .api-toggle svg{transition:transform .3s ease}
+        .api-toggle.open svg{transform:rotate(180deg)}
+        .api-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .api-body.open{max-height:2000px}
+        .api-body-inner{padding:24px}
+
+        .api-param-grid{display:grid;gap:16px;margin-bottom:24px}
+        .api-param{
+            display:flex;align-items:flex-start;gap:14px;
+            padding:14px 18px;border-radius:var(--radius-2);
+            background:rgba(255,255,255,.02);border:1px solid var(--border);
+        }
+        .api-param-name{
+            font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:700;
+            color:var(--accent-2);min-width:70px
+        }
+        .api-param-desc{font-size:13px;color:var(--text-2);line-height:1.6;flex:1}
+        .api-param-desc code{
+            background:rgba(255,255,255,.08);color:var(--accent-2);
+            padding:1px 6px;border-radius:4px;font-family:inherit;font-size:12px;
+        }
+        .api-param-req{font-size:10px;font-weight:700;color:var(--accent);padding:2px 8px;background:rgba(233,69,96,.12);border-radius:var(--radius-full)}
+        .api-param-opt{font-size:10px;font-weight:600;color:var(--text-3);padding:2px 8px;background:rgba(255,255,255,.05);border-radius:var(--radius-full)}
+
+        .api-code{
+            position:relative;background:#0d0d14;border-radius:var(--radius-2);
+            border:1px solid var(--border);padding:18px 20px;margin-bottom:16px;overflow-x:auto;
+        }
+        .api-code-label{font-size:11px;font-weight:700;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+        .api-code-label .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+        .api-code pre{
+            font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
+            font-size:13px;line-height:1.7;color:#d4d4e0;white-space:pre;
+            margin:0;
+        }
+        .api-code pre .k{color:#c792ea}
+        .api-code pre .s{color:#a5d6a7}
+        .api-code pre .n{color:#f78c6c}
+        .api-copy{
+            position:absolute;top:14px;right:14px;
+            padding:5px 12px;background:rgba(255,255,255,.06);
+            border:1px solid var(--border);border-radius:var(--radius-full);
+            font-size:11px;font-weight:600;color:var(--text-2);
+            cursor:pointer;transition:var(--transition);font-family:inherit;
+        }
+        .api-copy:hover{background:rgba(255,255,255,.1);color:#fff}
+        .api-copy.copied{background:#22c55e;border-color:#22c55e;color:#fff}
+
+        /* ===== Footer ===== */
+        .site-footer{
+            padding:40px 0;text-align:center;
+            border-top:1px solid var(--border);margin-top:40px;
+        }
+        .site-footer p{font-size:12px;color:var(--text-3)}
+        .site-footer a{color:var(--text-2);text-decoration:none;font-weight:500}
+        .site-footer a:hover{color:var(--accent-2)}
+
+        /* ===== Mini Player Bar ===== */
+        .mini-player{
+            position:fixed;bottom:0;left:0;right:0;z-index:200;
+            background:rgba(15,15,22,.85);
+            backdrop-filter:blur(24px) saturate(160%);
+            -webkit-backdrop-filter:blur(24px) saturate(160%);
+            border-top:1px solid var(--border);
+            transform:translateY(100%);transition:transform .4s ease;
+        }
+        .mini-player.show{transform:translateY(0)}
+        .mini-inner{
+            max-width:1200px;margin:0 auto;padding:14px 24px;
+            display:flex;align-items:center;gap:16px;
+        }
+        .mini-cover{
+            width:48px;height:48px;border-radius:var(--radius-1);overflow:hidden;flex-shrink:0;
+            box-shadow:0 4px 12px rgba(0,0,0,.4);
+        }
+        .mini-cover img{width:100%;height:100%;object-fit:cover}
+        .mini-info{flex:1;min-width:0}
+        .mini-title{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .mini-sub{font-size:11px;color:var(--text-3);margin-top:2px}
+        .mini-controls{display:flex;gap:8px;align-items:center}
+        .mini-btn{
+            width:40px;height:40px;border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            border:none;color:#fff;font-size:14px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            transition:var(--transition);
+            box-shadow:0 4px 14px var(--accent-glow);
+        }
+        .mini-btn:hover{transform:scale(1.08)}
+        .mini-btn:active{transform:scale(.95)}
+
+        /* ===== Animations ===== */
+        @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes eq{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+        /* ===== Responsive ===== */
+        @media(max-width:900px){
+            .hero-inner{grid-template-columns:1fr;gap:32px}
+            .hero-cover{width:240px;margin:0 auto;animation:none}
+            .hero h1{font-size:36px}
+            .nav-links{display:none}
+        }
+        @media(max-width:560px){
+            .container{padding:0 16px}
+            .hero{padding:32px 0 24px}
+            .hero h1{font-size:28px;letter-spacing:-1px}
+            .hero-meta{gap:18px}
+            .hero-meta-num{font-size:18px}
+            .hero-cover{width:200px}
+            .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+            .card-body{padding:10px 12px 14px}
+            .hero-actions{flex-direction:column;align-items:stretch}
+            .btn{justify-content:center}
+            .mini-inner{padding:10px 16px;gap:12px}
+            .mini-cover{width:40px;height:40px}
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="hero-content">
-            <div class="hero-icon">🎵</div>
-            <h1>Meting API</h1>
-            <p>多平台音乐 API 服务 · 网易云 / QQ音乐 / 酷狗 / 酷我</p>
-            <div class="badges">
-                <a href="https://github.com/ybming/vercel-meting-api" target="_blank" style="text-decoration:none;">
-                    <img alt="Github" src="https://img.shields.io/badge/Github-vercel-meting-green">
-                    <img alt="PHP" src="https://img.shields.io/badge/PHP-8.x-blue">
-                    <img alt="Vercel" src="https://img.shields.io/badge/Vercel-serverless-black">
-                </a>
-            </div>
+
+<!-- Navbar -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon">🎵</div>
+            <span>Meting</span>
+        </a>
+        <div class="nav-links">
+            <a href="#playlists" class="nav-link">歌单发现</a>
+            <a href="#api" class="nav-link">API 文档</a>
+            <a href="docs/" class="nav-link primary">在线播放 →</a>
         </div>
     </div>
+</nav>
 
+<!-- Hero -->
+<section class="hero">
     <div class="container">
-        <!-- 状态卡片 -->
-        <div class="card">
-            <div class="card-title">📊 服务状态 <span class="status-badge"><span class="status-dot"></span>运行中</span></div>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">版本</div>
-                    <div class="info-value">2.0.0</div>
+        <div class="hero-inner">
+            <div>
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    多平台音乐 · 网易云 / QQ音乐
                 </div>
-                <div class="info-item">
-                    <div class="info-label">运行环境</div>
-                    <div class="info-value">Vercel Serverless</div>
+                <h1>让好音乐<br>触手可及</h1>
+                <p class="hero-desc">
+                    一个简洁优雅的跨平台音乐 API，支持网易云与 QQ 音乐的歌单、单曲、歌词、封面获取，
+                    可直接嵌入 APlayer / MetingJS 播放器，部署于 Vercel Serverless。
+                </p>
+                <div class="hero-actions">
+                    <a href="docs/" class="btn btn-primary">▶ 立即体验</a>
+                    <a href="#api" class="btn btn-ghost">📖 查看 API</a>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">当前时间</div>
-                    <div class="info-value" id="nowTime">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">PHP 版本</div>
-                    <div class="info-value"><?php echo PHP_VERSION; ?></div>
-                </div>
-                <div class="info-item" style="grid-column: span 2;">
-                    <div class="info-label">API 地址</div>
-                    <div class="info-value"><a href="<?php echo API_URI; ?>"><?php echo API_URI; ?></a></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 快速导航 -->
-        <div class="card" style="animation-delay: 0.5s;">
-            <div class="card-title">🔗 快速导航</div>
-            <div class="links-grid">
-                <a class="link-card" href="docs/">
-                    <span class="link-icon">🧪</span>
-                    <span class="link-info">
-                        <span class="link-title">测试页面</span>
-                        <span class="link-desc">APlayer 在线播放器体验</span>
-                    </span>
-                    <span class="link-arrow">→</span>
-                </a>
-                <a class="link-card" href="<?php echo API_URI; ?>?server=netease&type=playlist&id=2619366284">
-                    <span class="link-icon">⚡</span>
-                    <span class="link-info">
-                        <span class="link-title">API 示例</span>
-                        <span class="link-desc">直接查看 JSON 响应</span>
-                    </span>
-                    <span class="link-arrow">→</span>
-                </a>
-                <a class="link-card" href="https://github.com/ybming/vercel-meting-api" target="_blank">
-                    <span class="link-icon">📖</span>
-                    <span class="link-info">
-                        <span class="link-title">GitHub 仓库</span>
-                        <span class="link-desc">源码与部署说明</span>
-                    </span>
-                    <span class="link-arrow">→</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- API 文档 -->
-        <div class="card">
-            <div class="card-title">📖 API 接口文档</div>
-
-            <div class="api-endpoint">
-                <span class="api-method method-get">GET</span>
-                <span class="api-path">/</span>
-            </div>
-
-            <div class="section-subtitle">📋 请求参数</div>
-            <table class="param-table">
-                <thead>
-                    <tr><th>参数名</th><th>类型</th><th>必填</th><th>默认值</th><th>说明</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="param-name">server</span></td>
-                        <td><span class="param-type">string</span></td>
-                        <td><span class="param-optional">否</span></td>
-                        <td><span class="param-default">netease</span></td>
-                        <td>音乐平台：<code>netease</code>（网易云）、<code>tencent</code>（QQ音乐）</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">type</span></td>
-                        <td><span class="param-type">string</span></td>
-                        <td><span class="param-required">是</span></td>
-                        <td>—</td>
-                        <td>请求类型：<code>song</code> / <code>playlist</code> / <code>url</code> / <code>pic</code> / <code>lrc</code> / <code>name</code> / <code>artist</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">id</span></td>
-                        <td><span class="param-type">string</span></td>
-                        <td><span class="param-required">是</span></td>
-                        <td>—</td>
-                        <td>资源 ID（歌单 ID / 歌曲 ID / 专辑 ID 等）</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="section-subtitle">🔢 类型支持矩阵</div>
-            <table class="param-table">
-                <thead>
-                    <tr><th>type</th><th>说明</th><th>netease</th><th>tencent</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td><span class="param-name">song</span></td><td>单曲信息</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">playlist</span></td><td>歌单</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">url</span></td><td>播放链接</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">lrc</span></td><td>歌词</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                    <tr><td><span class="param-name">pic</span></td><td>封面图片</td><td class="platform-check">✓</td><td class="platform-check">✓</td></tr>
-                </tbody>
-            </table>
-
-            <div class="section-subtitle">📨 请求示例</div>
-            <div class="code-label">歌单 <span class="tag tag-text">URL</span></div>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">复制</button>
-                <pre><?php echo API_URI; ?>?server=netease&type=playlist&id=2619366284</pre>
-            </div>
-            <div class="code-label">单曲播放链接 <span class="tag tag-text">URL</span></div>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">复制</button>
-                <pre><?php echo API_URI; ?>?server=netease&type=url&id=416892104</pre>
-            </div>
-
-            <div class="section-subtitle">✅ 响应示例</div>
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab(event, 'tab-song')">song / playlist</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-url')">url</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-lrc')">lrc</button>
-                <button class="tab-btn" onclick="switchTab(event, 'tab-pic')">pic</button>
-            </div>
-
-            <div class="tab-content active" id="tab-song">
-                <div class="code-label">成功响应 <span class="tag tag-json">JSON</span> <span style="color:var(--success);font-weight:700;">200</span></div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
-                    <pre>[
-  {
-    "name": "稻香",
-    "artist": "周杰伦",
-    "url": "<?php echo API_URI; ?>?server=netease&type=url&id=416892104",
-    "pic": "<?php echo API_URI; ?>?server=netease&type=pic&id=2100968507",
-    "lrc": "<?php echo API_URI; ?>?server=netease&type=lrc&id=416892104",
-    "id": "416892104"
-  }
-]</pre>
+                <div class="hero-meta">
+                    <div class="hero-meta-item">
+                        <div class="hero-meta-num" id="nowTime">--</div>
+                        <div class="hero-meta-label">当前时间</div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <div class="hero-meta-num">2.0</div>
+                        <div class="hero-meta-label">API 版本</div>
+                    </div>
+                    <div class="hero-meta-item">
+                        <div class="hero-meta-num"><?php echo PHP_VERSION; ?></div>
+                        <div class="hero-meta-label">PHP Runtime</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="tab-content" id="tab-url">
-                <div class="code-label">成功响应 <span class="tag tag-redirect">302 Redirect</span></div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
-                    <pre>HTTP/1.1 302 Found
-Location: https://m701.music.126.net/xxx/xxx.mp3</pre>
+            <!-- Featured Cover -->
+            <div class="hero-cover">
+                <img src="<?php echo API_URI; ?>?server=netease&type=pic&id=2100968507" alt="Featured">
+                <div class="hero-cover-overlay"></div>
+                <div class="eq"><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="hero-cover-info">
+                    <div class="hero-cover-title">云音乐飙升榜</div>
+                    <div class="hero-cover-sub">每周更新 · 热歌速递</div>
                 </div>
-                <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;">浏览器/播放器会自动跟随重定向获取实际音频</div>
+                <div class="hero-cover-play" onclick="playFeatured()"></div>
             </div>
-
-            <div class="tab-content" id="tab-lrc">
-                <div class="code-label">成功响应 <span class="tag tag-text">Text</span> <span style="color:var(--success);font-weight:700;">200</span></div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
-                    <pre>[00:00.00] 作词 : 周杰伦
-[00:01.00] 作曲 : 周杰伦
-[00:10.50] 对这个世界如果你有太多的抱怨
-[00:15.30] 跌倒了 就不敢继续往前走</pre>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-pic">
-                <div class="code-label">成功响应 <span class="tag tag-redirect">302 Redirect</span></div>
-                <div class="code-block">
-                    <button class="copy-btn" onclick="copyCode(this)">复制</button>
-                    <pre>HTTP/1.1 302 Found
-Location: https://p3.music.126.net/xxx.jpg</pre>
-                </div>
-            </div>
-
-            <div class="section-subtitle">❌ 错误响应</div>
-            <table class="error-table">
-                <thead>
-                    <tr><th>状态码</th><th>说明</th><th>响应</th></tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="error-code error-400">400</span></td>
-                        <td>参数不合法</td>
-                        <td><code>{"error":"unknown type"}</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="error-code error-403">403</span></td>
-                        <td>资源不可用或需要鉴权</td>
-                        <td><code>{"error":"no url"}</code></td>
-                    </tr>
-                    <tr>
-                        <td><span class="error-code" style="color:var(--danger);">404</span></td>
-                        <td>歌单/歌曲不存在</td>
-                        <td><code>{"error":"unknown playlist id"}</code></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
+</section>
 
-    <footer>
+<!-- Playlists -->
+<section class="section" id="playlists">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="section-title">精选歌单</div>
+                <div class="section-sub">点击卡片即可在底部播放器中播放</div>
+            </div>
+            <a href="docs/" class="section-more">浏览全部 →</a>
+        </div>
+
+        <div class="grid" id="playlistGrid">
+            <!-- Cards injected by JS -->
+        </div>
+    </div>
+</section>
+
+<!-- API Section (collapsible) -->
+<section class="api-section" id="api">
+    <div class="container">
+        <div class="api-card">
+            <div class="api-head">
+                <div class="api-head-left">
+                    <div class="section-title">API 接口文档</div>
+                </div>
+                <button class="api-toggle" onclick="toggleApi(this)">
+                    展开详情
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+            </div>
+            <div class="api-body" id="apiBody">
+                <div class="api-body-inner">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:14px 18px;background:rgba(255,255,255,.02);border-radius:var(--radius-2);border:1px solid var(--border)">
+                        <span style="background:#22c55e;color:#fff;padding:4px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:700">GET</span>
+                        <code style="font-family:'SF Mono',monospace;font-size:13px;color:#fff"><?php echo API_URI; ?></code>
+                    </div>
+
+                    <div class="section-subtitle" style="margin-bottom:14px;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px">📋 请求参数</div>
+                    <div class="api-param-grid">
+                        <div class="api-param">
+                            <div class="api-param-name">server</div>
+                            <div class="api-param-desc">音乐平台：<code>netease</code>（网易云）/ <code>tencent</code>（QQ音乐）</div>
+                            <div class="api-param-opt">可选 · 默认 netease</div>
+                        </div>
+                        <div class="api-param">
+                            <div class="api-param-name">type</div>
+                            <div class="api-param-desc">请求类型：<code>song</code> / <code>playlist</code> / <code>url</code> / <code>pic</code> / <code>lrc</code></div>
+                            <div class="api-param-req">必填</div>
+                        </div>
+                        <div class="api-param">
+                            <div class="api-param-name">id</div>
+                            <div class="api-param-desc">资源 ID（歌单 ID / 歌曲 ID 等）</div>
+                            <div class="api-param-req">必填</div>
+                        </div>
+                    </div>
+
+                    <div class="section-subtitle" style="margin:28px 0 14px;font-size:13px;font-weight:700;color:#fff">🔢 类型支持矩阵</div>
+                    <div style="overflow-x:auto;margin-bottom:24px">
+                        <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:420px">
+                            <thead>
+                                <tr style="border-bottom:1px solid var(--border)">
+                                    <th style="padding:12px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">type</th>
+                                    <th style="padding:12px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">说明</th>
+                                    <th style="padding:12px 14px;text-align:center;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">netease</th>
+                                    <th style="padding:12px 14px;text-align:center;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">tencent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px 14px"><code style="color:var(--accent-2);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-size:12px">song</code></td><td style="padding:12px 14px;color:var(--text-2)">单曲信息</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td></tr>
+                                <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px 14px"><code style="color:var(--accent-2);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-size:12px">playlist</code></td><td style="padding:12px 14px;color:var(--text-2)">歌单</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td></tr>
+                                <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px 14px"><code style="color:var(--accent-2);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-size:12px">url</code></td><td style="padding:12px 14px;color:var(--text-2)">播放链接</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td></tr>
+                                <tr style="border-bottom:1px solid var(--border)"><td style="padding:12px 14px"><code style="color:var(--accent-2);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-size:12px">lrc</code></td><td style="padding:12px 14px;color:var(--text-2)">歌词</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td></tr>
+                                <tr><td style="padding:12px 14px"><code style="color:var(--accent-2);background:rgba(255,255,255,.06);padding:2px 8px;border-radius:4px;font-size:12px">pic</code></td><td style="padding:12px 14px;color:var(--text-2)">封面图片</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td><td style="padding:12px 14px;text-align:center;color:#22c55e;font-weight:700">✓</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section-subtitle" style="margin:28px 0 14px;font-size:13px;font-weight:700;color:#fff">📨 请求示例</div>
+                    <div class="api-code">
+                        <button class="api-copy" onclick="copyCode(this)">复制</button>
+                        <div class="api-code-label"><span class="dot"></span>歌单 · JSON 响应</div>
+<pre><?php echo API_URI; ?>?server=netease&type=playlist&id=2619366284</pre>
+                    </div>
+                    <div class="api-code">
+                        <button class="api-copy" onclick="copyCode(this)">复制</button>
+                        <div class="api-code-label"><span class="dot"></span>单曲 · 302 重定向到音频</div>
+<pre><?php echo API_URI; ?>?server=netease&type=url&id=416892104</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <p>
         Powered by <a href="https://github.com/metowolf/Meting" target="_blank">Meting</a> ·
         Deployed on <a href="https://vercel.com" target="_blank">Vercel</a> ·
-        <a href="https://github.com/ybming/vercel-meting-api" target="_blank">GitHub</a>
-    </footer>
+        <a href="https://github.com/ybming/vercel-meting-api" target="_blank">GitHub →</a>
+    </p>
+</footer>
 
-    <script>
-    (function() {
-        function updateTime() {
-            document.getElementById('nowTime').textContent = new Date().toLocaleString('zh-CN');
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
-    })();
+<!-- Mini Player -->
+<div class="mini-player" id="miniPlayer">
+    <div class="mini-inner">
+        <div class="mini-cover" id="miniCover">
+            <img src="<?php echo API_URI; ?>?server=netease&type=pic&id=2100968507" alt="">
+        </div>
+        <div class="mini-info">
+            <div class="mini-title" id="miniTitle">云音乐飙升榜</div>
+            <div class="mini-sub" id="miniSub">精选热门 · 点击播放</div>
+        </div>
+        <div class="mini-controls">
+            <button class="mini-btn" onclick="openDocs()" title="打开播放器">▶</button>
+        </div>
+    </div>
+</div>
 
-    function copyCode(btn) {
-        var pre = btn.parentElement.querySelector('pre');
-        navigator.clipboard.writeText(pre.textContent).then(function() {
-            btn.textContent = '已复制';
-            btn.classList.add('copied');
-            setTimeout(function() { btn.textContent = '复制'; btn.classList.remove('copied'); }, 1500);
+<script>
+(function(){
+    // 时间更新
+    function updateTime(){
+        document.getElementById('nowTime').textContent = new Date().toLocaleTimeString('zh-CN',{hour12:false});
+    }
+    updateTime();
+    setInterval(updateTime,1000);
+
+    // 精选歌单数据
+    const playlists = [
+        {server:'netease',type:'playlist',id:'2619366284',title:'云音乐飙升榜',sub:'网易云 · 官方榜',cover_id:'2100968507'},
+        {server:'netease',type:'playlist',id:'440103454',title:'私人雷达',sub:'网易云 · 每日推荐',cover_id:'2063124907'},
+        {server:'netease',type:'playlist',id:'3778678',title:'欧美流行精选',sub:'网易云 · 编辑精选',cover_id:'1901371098'},
+        {server:'netease',type:'playlist',id:'180106',title:'日语 ACG 精选',sub:'网易云 · 二次元',cover_id:'1883586452'},
+        {server:'netease',type:'playlist',id:'21845217',title:'华语经典老歌',sub:'网易云 · 怀旧经典',cover_id:'1455080114'},
+        {server:'tencent',type:'playlist',id:'9697595502',title:'QQ音乐热歌榜',sub:'QQ音乐 · 热歌速递',cover_id:'0038ZG5W3EBBG9'},
+        {server:'tencent',type:'playlist',id:'7326220405',title:'QQ音乐官方歌单',sub:'QQ音乐 · 编辑推荐',cover_id:'002Rnpvi058Qdm'},
+        {server:'netease',type:'playlist',id:'6907557348',title:'纯音乐 & 氛围',sub:'网易云 · 放松必备',cover_id:'2013369464'},
+    ];
+
+    const apiUri = <?php echo json_encode(API_URI); ?>;
+    const grid = document.getElementById('playlistGrid');
+
+    playlists.forEach((p,i)=>{
+        const coverUrl = apiUri + '?server=' + p.server + '&type=pic&id=' + p.cover_id;
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.animationDelay = (i*0.06) + 's';
+        card.innerHTML =
+            '<div class="card-cover">' +
+                '<img src="'+coverUrl+'" alt="'+p.title+'" loading="lazy" onerror="this.style.background=\'linear-gradient(135deg,#2a2a3a,#1a1a28)\';this.src=\'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%232a2a3a%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2255%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%23555%22>🎵</text></svg>\'">' +
+                '<span class="card-badge '+p.server+'">'+(p.server==='netease'?'网易云':'QQ')+'</span>' +
+                '<div class="card-play"></div>' +
+            '</div>' +
+            '<div class="card-body">' +
+                '<div class="card-title">'+p.title+'</div>' +
+                '<div class="card-sub">'+p.sub+'</div>' +
+            '</div>';
+        card.addEventListener('click',()=>{
+            showMiniPlayer(p.title,p.sub,coverUrl);
+            // 打开 docs 页并带上歌单参数
+            window.open('docs/?server='+p.server+'&type='+p.type+'&id='+p.id,'_blank');
         });
-    }
+        grid.appendChild(card);
+    });
 
-    function switchTab(e, tabId) {
-        var tabs = e.target.closest('.tabs');
-        tabs.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-        e.target.classList.add('active');
-        var card = e.target.closest('.card');
-        card.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
-        document.getElementById(tabId).classList.add('active');
-    }
-    </script>
+    // 迷你播放器
+    const mini = document.getElementById('miniPlayer');
+    setTimeout(()=>mini.classList.add('show'),800);
+
+    window.showMiniPlayer = function(title,sub,cover){
+        document.getElementById('miniTitle').textContent = title;
+        document.getElementById('miniSub').textContent = sub;
+        document.querySelector('#miniCover img').src = cover;
+        mini.classList.add('show');
+    };
+
+    window.openDocs = function(){ window.location.href = 'docs/'; };
+    window.playFeatured = function(){ window.open('docs/?server=netease&type=playlist&id=2619366284','_blank'); };
+})();
+
+function toggleApi(btn){
+    const body = document.getElementById('apiBody');
+    body.classList.toggle('open');
+    btn.classList.toggle('open');
+    btn.querySelector('svg').style.transform = body.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+    btn.childNodes[0].textContent = body.classList.contains('open') ? '收起详情' : '展开详情';
+}
+
+function copyCode(btn){
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent).then(()=>{
+        btn.textContent = '已复制 ✓';
+        btn.classList.add('copied');
+        setTimeout(()=>{btn.textContent='复制';btn.classList.remove('copied')},1500);
+    });
+}
+</script>
 </body>
 </html>
